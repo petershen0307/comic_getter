@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -26,7 +27,7 @@ func downloadOneChapter(ch int) {
 
 func downloadOnePage(ch, page int) errorCode {
 	dir := fmt.Sprintf("%02d", ch)
-	fileName := fmt.Sprintf("%d.jpg", page)
+	fileName := fmt.Sprintf("%02d.jpg", page)
 	if isFileExist(dir, fileName) {
 		return eFileExisted
 	}
@@ -89,5 +90,13 @@ func writeFile(reader io.Reader, dir, fileName string) {
 }
 
 func main() {
-	downloadOneChapter(0)
+	if len(os.Args) == 1 {
+		fmt.Println("Please input chapter number!")
+	} else {
+		if ch, err := strconv.Atoi(os.Args[1]); err == nil {
+			downloadOneChapter(ch)
+		} else {
+			panic(err)
+		}
+	}
 }
