@@ -11,6 +11,7 @@ import (
 )
 
 const urlTemplate = "http://www.readcomics.tv/images/manga/justice-league/%02d/%d.jpg"
+const comicRootDir = "justice_league"
 
 type errorCode int
 
@@ -21,6 +22,13 @@ const (
 )
 
 func downloadOneChapter(ch int) {
+	if _, err := os.Stat(comicRootDir); os.IsNotExist(err) {
+		fmt.Println("Create dir: ", comicRootDir)
+		if err := os.Mkdir(comicRootDir, os.ModeDir); err != nil {
+			panic(err)
+		}
+		os.Chdir(comicRootDir)
+	}
 	for i := 1; downloadOnePage(ch, i) != ePageNotFound; i++ {
 	}
 }
