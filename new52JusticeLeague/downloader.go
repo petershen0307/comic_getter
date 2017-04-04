@@ -23,12 +23,12 @@ const (
 
 func downloadOneChapter(ch int) {
 	if _, err := os.Stat(comicRootDir); os.IsNotExist(err) {
-		fmt.Println("Create dir: ", comicRootDir)
+		fmt.Println("Create root dir: ", comicRootDir)
 		if err := os.Mkdir(comicRootDir, os.ModeDir); err != nil {
 			panic(err)
 		}
-		os.Chdir(comicRootDir)
 	}
+	os.Chdir(comicRootDir)
 	for i := 1; downloadOnePage(ch, i) != ePageNotFound; i++ {
 	}
 }
@@ -39,7 +39,7 @@ func downloadOnePage(ch, page int) errorCode {
 	if isFileExist(dir, fileName) {
 		return eFileExisted
 	}
-	timeoutRequest := http.Client{Timeout: time.Second * 10}
+	timeoutRequest := http.Client{Timeout: time.Second * 30}
 	url := fmt.Sprintf(urlTemplate, ch, page)
 	response, err := timeoutRequest.Get(url)
 	if err != nil {
@@ -50,7 +50,7 @@ func downloadOnePage(ch, page int) errorCode {
 		fmt.Println("Page not found! url: ", url)
 		return ePageNotFound
 	}
-	fmt.Println("Content Length: ", response.ContentLength)
+	fmt.Println("1 Content Length: ", response.ContentLength)
 
 	writeFile(response.Body, dir, fileName)
 	return eSuccess
@@ -87,7 +87,7 @@ func writeFile(reader io.Reader, dir, fileName string) {
 		panic(err)
 	}
 
-	fmt.Println("data length: ", len(data))
+	fmt.Println("2 Data Length: ", len(data))
 	path := fmt.Sprintf("%s/%s", dir, fileName)
 	fo, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
