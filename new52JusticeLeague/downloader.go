@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"strconv"
 	"time"
 )
 
@@ -95,16 +94,4 @@ func writeFile(reader io.Reader, dir, fileName string) {
 	}
 	defer fo.Close()
 	fo.Write(data)
-}
-
-func main() {
-	if len(os.Args) == 1 {
-		fmt.Println("Please input chapter number!")
-	} else {
-		if ch, err := strconv.Atoi(os.Args[1]); err == nil {
-			downloadOneChapter(ch)
-		} else {
-			panic(err)
-		}
-	}
 }
