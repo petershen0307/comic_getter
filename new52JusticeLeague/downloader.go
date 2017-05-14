@@ -4,12 +4,19 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"time"
 )
 
-const urlTemplate = "http://www.readcomics.tv/images/manga/justice-league/%02d/%d.jpg"
+var mangaURL = url.URL{Scheme: "http", Host: "readcomicbooksonline.net"}
+
+const urlTemplate = "reader/mangas/Justice League/Justice League %03[1]d/jlu-ch%03[1]d-%02[2]d.jpg"
+
+// const urlTemplate = "http://www.readcomics.tv/images/manga/justice-league/%02d/%d.jpg"
+// const urlTemplate = "http://readcomicbooksonline.net/reader/mangas/Justice League/Justice League %03[1]d/jlu-ch%03[1]d-%02[2]d.jpg"
 const comicRootDir = "justice_league"
 
 type errorCode int
@@ -39,14 +46,19 @@ func downloadOnePage(ch, page int) errorCode {
 		return eFileExisted
 	}
 	timeoutRequest := http.Client{Timeout: time.Second * 30}
-	url := fmt.Sprintf(urlTemplate, ch, page)
-	response, err := timeoutRequest.Get(url)
+	mangaURL.Path = fmt.Sprintf(urlTemplate, ch, page)
+	targetURL := mangaURL.String()
+	response, err := timeoutRequest.Get(targetURL)
 	if err != nil {
 		panic(err)
 	}
 	defer response.Body.Close()
-	if response.StatusCode == 404 {
-		fmt.Println("Page not found! url: ", url)
+	if 404 == response.StatusCode {
+		log.Println("Page not found! url: ", targetURL)
+		return ePageNotFound
+	}
+	if -1 == response.ContentLength {
+		log.Println("url: ", targetURL, ";status code: ", response.StatusCode)
 		return ePageNotFound
 	}
 	fmt.Println("1 Content Length: ", response.ContentLength)
