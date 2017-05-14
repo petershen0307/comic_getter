@@ -6,11 +6,14 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/http/cookiejar"
 	"net/url"
 	"os"
+	"strings"
 	"time"
 )
 
+var webCookieJar *cookiejar.Jar
 var mangaURL = url.URL{Scheme: "http", Host: "readcomicbooksonline.net"}
 
 const urlTemplate = "reader/mangas/Justice League/Justice League %03[1]d/jlu-ch%03[1]d-%02[2]d.jpg"
@@ -46,6 +49,9 @@ func downloadOnePage(ch, page int) errorCode {
 		return eFileExisted
 	}
 	timeoutRequest := http.Client{Timeout: time.Second * 30}
+	if nil != webCookieJar {
+		timeoutRequest.Jar = webCookieJar
+	}
 	mangaURL.Path = fmt.Sprintf(urlTemplate, ch, page)
 	targetURL := mangaURL.String()
 	response, err := timeoutRequest.Get(targetURL)
@@ -61,8 +67,15 @@ func downloadOnePage(ch, page int) errorCode {
 		log.Println("url: ", targetURL, ";status code: ", response.StatusCode)
 		return ePageNotFound
 	}
+	if nil == webCookieJar {
+		webCookieJar, _ = cookiejar.New(nil)
+		cookieStr := strings.Split(response.Header["Set-Cookie"][0], ";")
+		cookieArray := strings.Split(cookieStr[0], "=")
+		cookie := &http.Cookie{Name: cookieArray[0], Value: cookieArray[1]}
+		webCookieJar.SetCookies(&mangaURL, []*http.Cookie{cookie})
+		log.Println("set cookie", cookie)
+	}
 	fmt.Println("1 Content Length: ", response.ContentLength)
-
 	writeFile(response.Body, dir, fileName)
 	return eSuccess
 }
