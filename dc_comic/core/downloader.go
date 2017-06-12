@@ -1,4 +1,4 @@
-package main
+package core
 
 import (
 	"fmt"
@@ -26,21 +26,22 @@ const (
 	eFileExisted
 )
 
+// DownloadOneChapter to download with chapter and catlog
+func DownloadOneChapter(ch int, comicCatlog, urlTemplate string) {
+	createDir(comicRootDir)
+	os.Chdir(comicRootDir)
+	createDir(comicCatlog)
+	os.Chdir(comicCatlog)
+	for i := 1; downloadOnePage(ch, i, urlTemplate) != ePageNotFound; i++ {
+	}
+}
+
 func createDir(pathName string) {
 	if _, err := os.Stat(pathName); os.IsNotExist(err) {
 		fmt.Println("Create root dir: ", pathName)
 		if err := os.Mkdir(pathName, os.ModeDir); err != nil {
 			panic(err)
 		}
-	}
-}
-
-func downloadOneChapter(ch int, comicCatlog, urlTemplate string) {
-	createDir(comicRootDir)
-	os.Chdir(comicRootDir)
-	createDir(comicCatlog)
-	os.Chdir(comicCatlog)
-	for i := 1; downloadOnePage(ch, i, urlTemplate) != ePageNotFound; i++ {
 	}
 }
 
