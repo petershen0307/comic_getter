@@ -16,11 +16,7 @@ import (
 var webCookieJar *cookiejar.Jar
 var mangaURL = url.URL{Scheme: "http", Host: "readcomicbooksonline.net"}
 
-const urlTemplate = "reader/mangas/Justice League/Justice League %03[1]d/jlu-ch%03[1]d-%02[2]d.jpg"
-
-// const urlTemplate = "http://www.readcomics.tv/images/manga/justice-league/%02d/%d.jpg"
-// const urlTemplate = "http://readcomicbooksonline.net/reader/mangas/Justice League/Justice League %03[1]d/jlu-ch%03[1]d-%02[2]d.jpg"
-const comicRootDir = "justice_league"
+const comicRootDir = "dc_comic"
 
 type errorCode int
 
@@ -30,19 +26,25 @@ const (
 	eFileExisted
 )
 
-func downloadOneChapter(ch int) {
-	if _, err := os.Stat(comicRootDir); os.IsNotExist(err) {
-		fmt.Println("Create root dir: ", comicRootDir)
-		if err := os.Mkdir(comicRootDir, os.ModeDir); err != nil {
+func createDir(pathName string) {
+	if _, err := os.Stat(pathName); os.IsNotExist(err) {
+		fmt.Println("Create root dir: ", pathName)
+		if err := os.Mkdir(pathName, os.ModeDir); err != nil {
 			panic(err)
 		}
 	}
+}
+
+func downloadOneChapter(ch int, comicCatlog, urlTemplate string) {
+	createDir(comicRootDir)
 	os.Chdir(comicRootDir)
-	for i := 1; downloadOnePage(ch, i) != ePageNotFound; i++ {
+	createDir(comicCatlog)
+	os.Chdir(comicCatlog)
+	for i := 1; downloadOnePage(ch, i, urlTemplate) != ePageNotFound; i++ {
 	}
 }
 
-func downloadOnePage(ch, page int) errorCode {
+func downloadOnePage(ch, page int, urlTemplate string) errorCode {
 	dir := fmt.Sprintf("%02d", ch)
 	fileName := fmt.Sprintf("%02d.jpg", page)
 	if isFileExist(dir, fileName) {

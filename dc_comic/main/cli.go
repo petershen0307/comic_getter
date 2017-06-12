@@ -6,6 +6,8 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/petershen0307/comic_getter/dc_comic/justiceLeague"
+
 	"github.com/urfave/cli"
 )
 
@@ -30,7 +32,7 @@ func main() {
 			fmt.Println("Please input chapter number!")
 		}
 		if ch, err := strconv.Atoi(ch); err == nil {
-			downloadOneChapter(ch)
+			downloadOneChapter(ch, justiceLeague.ComicCatlog, justiceLeague.URLTemplate)
 		}
 		return nil
 	}
