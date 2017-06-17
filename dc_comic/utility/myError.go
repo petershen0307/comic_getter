@@ -4,9 +4,9 @@ import "fmt"
 
 // MyError is an error structure
 type MyError struct {
-	what string
+	What string
 }
 
 func (e MyError) Error() string {
-	return fmt.Sprintf("%v", e.what)
+	return fmt.Sprintf("%v", e.What)
 }
