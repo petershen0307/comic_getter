@@ -26,29 +26,26 @@ func downloadPage(mangaURL string) string {
 	return string(byteData)
 }
 
-func decomposePictureURL(page string) string {
+func decomposePictureURL(page string) (string, error) {
 	// 1. find base url
 	reBaseURL := regexp.MustCompile("base href=\"([a-zA-Z0-9.:/])+\"")
 	fullBaseURL := reBaseURL.FindAllString(page, 1)
 	if len(fullBaseURL) == 0 {
-		log.Fatalln("Can't find base url!")
-		return ""
+		return "", MyError{"Can't find base url!"}
 	}
 	noQuote := strings.Replace(fullBaseURL[0], "\"", "", -1)
 	baseURL := strings.Split(noQuote, "=")
 	if len(baseURL) != 2 {
-		log.Fatalln("Split url with some error")
-		return ""
+		return "", MyError{"Split url with some error"}
 	}
 	// 2. find picture url
 	rePic := regexp.MustCompile("mangas/([a-zA-Z0-9 _/-])+.jpg")
 	picture := rePic.FindAllString(page, 1)
 	if len(picture) == 0 {
-		log.Fatalln("Can't find the picture!")
-		return ""
+		return "", MyError{"Can't find the picture!"}
 	}
 	// 3. compose base url and picture url
-	return baseURL[1] + picture[0]
+	return baseURL[1] + picture[0], nil
 }
 
 //func decomposeChapterMaxPage()
