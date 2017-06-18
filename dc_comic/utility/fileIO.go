@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path"
 )
 
 // CreateDir to create folder
@@ -33,9 +34,9 @@ func IsFileExist(dir, fileName string) bool {
 		os.IsExist(err) is good for cases when you expect the file to not exist yet,
 		but the file actually exists :
 	*/
-	path := fmt.Sprintf("%s/%s", dir, fileName)
-	if _, err := os.Stat(path); err == nil {
-		log.Println("File exist: ", path)
+	filePath := path.Join(dir, fileName)
+	if _, err := os.Stat(filePath); err == nil {
+		log.Println("File exist: ", filePath)
 		return true
 	}
 	return false

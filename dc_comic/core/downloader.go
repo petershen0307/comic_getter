@@ -27,7 +27,6 @@ func DownloadEntry(ch int, comicCatlog, rootURL string) {
 		return
 	}
 	chapters := decomposeAllChapter(rootPageDetail)
-	log.Println(chapters)
 	if ch > len(chapters) || ch < 1 {
 		log.Fatalf("Got chapter length(%v) and Chapter(%v) not exist", len(chapters), ch)
 		return
@@ -40,7 +39,6 @@ func DownloadEntry(ch int, comicCatlog, rootURL string) {
 }
 
 func downloadChapter(dir, mangaURL string) error {
-
 	maxPageDetail, err := getPage(mangaURL)
 	if err != nil {
 		log.Fatalln(err)
@@ -52,6 +50,10 @@ func downloadChapter(dir, mangaURL string) error {
 		return err
 	}
 	for i := 1; i <= maxPage; i++ {
+		pictureName := fmt.Sprintf("%02d.jpg", i)
+		if utility.IsFileExist(dir, pictureName) {
+			continue
+		}
 		mangaPageURL := fmt.Sprintf("%v/%d", mangaURL, i)
 		log.Printf("Download page: %v\n", mangaPageURL)
 		pageDetail, err := getPage(mangaPageURL)
@@ -60,7 +62,7 @@ func downloadChapter(dir, mangaURL string) error {
 			log.Fatalln(err)
 			continue
 		}
-		err = downloadPicture(dir, fmt.Sprintf("%02d.jpg", i), pictureURL)
+		err = downloadPicture(dir, pictureName, pictureURL)
 		if err != nil {
 			log.Fatalln(err)
 			continue
