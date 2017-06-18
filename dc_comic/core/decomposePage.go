@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -11,6 +12,20 @@ import (
 
 	"github.com/petershen0307/comic_getter/dc_comic/utility"
 )
+
+func getPage(mangaURL string) (string, error) {
+	timeoutRequest := http.Client{Timeout: time.Second * 30}
+	response, err := timeoutRequest.Get(mangaURL)
+	if err != nil {
+		panic(err)
+	}
+	defer response.Body.Close()
+	if response.StatusCode != 200 {
+		return "", utility.MyError{What: fmt.Sprintf("Got http status code: %v", response.StatusCode)}
+	}
+	byteData, _ := ioutil.ReadAll(response.Body)
+	return string(byteData), nil
+}
 
 func downloadPage(mangaURL string) string {
 	timeoutRequest := http.Client{Timeout: time.Second * 30}

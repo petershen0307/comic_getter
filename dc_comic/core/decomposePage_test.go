@@ -1,26 +1,11 @@
 package core
 
 import (
-	"io/ioutil"
-	"net/http"
 	"testing"
-	"time"
 )
 
-func getPage() string {
-	timeoutRequest := http.Client{Timeout: time.Second * 30}
-	mangaURL := "http://readcomicbooksonline.net/reader/Wonder_Woman_2016/Wonder_Woman_2016_Issue_001"
-	response, err := timeoutRequest.Get(mangaURL)
-	if err != nil {
-		panic(err)
-	}
-	defer response.Body.Close()
-	byteData, _ := ioutil.ReadAll(response.Body)
-	return string(byteData)
-}
-
 func Test_decomposePictureURL(t *testing.T) {
-	pageDOM := getPage()
+	pageDOM, _ := getPage("http://readcomicbooksonline.net/reader/Wonder_Woman_2016/Wonder_Woman_2016_Issue_001")
 	type args struct {
 		page string
 	}
@@ -47,7 +32,7 @@ func Test_decomposePictureURL(t *testing.T) {
 }
 
 func Test_decomposeChapterMaxPage(t *testing.T) {
-	pageDOM := getPage()
+	pageDOM, _ := getPage("http://readcomicbooksonline.net/reader/Wonder_Woman_2016/Wonder_Woman_2016_Issue_001")
 	type args struct {
 		page string
 	}
