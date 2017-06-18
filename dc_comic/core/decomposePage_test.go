@@ -1,7 +1,11 @@
 package core
 
 import (
+	"fmt"
+	"strings"
 	"testing"
+
+	"github.com/petershen0307/comic_getter/dc_comic/utility"
 )
 
 func Test_decomposePictureURL(t *testing.T) {
@@ -60,6 +64,29 @@ func Test_decomposeChapterMaxPage(t *testing.T) {
 			if got != tt.want {
 				t.Errorf("decomposeChapterMaxPage() = %v, want %v", got, tt.want)
 			}
+		})
+	}
+}
+
+func Test_decomposeAllChapter(t *testing.T) {
+	mangaMap := utility.GetURLTemplate()
+	mangaCatlog := "wonder_woman_2016"
+	pageDetail, _ := getPage(mangaMap[mangaCatlog])
+	type args struct {
+		rootPageDetail string
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		// TODO: Add test cases.
+		{name: "all chapter", args: args{rootPageDetail: pageDetail}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := decomposeAllChapter(tt.args.rootPageDetail)
+			fmt.Println(len(got))
+			fmt.Println(strings.Join(got, "\n"))
 		})
 	}
 }

@@ -42,21 +42,22 @@ func IsFileExist(dir, fileName string) bool {
 }
 
 // WriteFile raw date to file
-func WriteFile(reader io.Reader, dir, fileName string) {
+func WriteFile(reader io.Reader, dir, fileName string) error {
 	if IsFileExist(dir, fileName) {
-		return
+		return nil
 	}
 	data, err := ioutil.ReadAll(reader)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	log.Println("2 Data Length: ", len(data))
 	path := fmt.Sprintf("%s/%s", dir, fileName)
 	fo, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	defer fo.Close()
-	fo.Write(data)
+	_, err = fo.Write(data)
+	return err
 }

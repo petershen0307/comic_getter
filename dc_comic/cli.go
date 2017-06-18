@@ -42,7 +42,7 @@ func main() {
 		}
 		if ch, err := strconv.Atoi(ch); err == nil {
 			cMap := utility.GetURLTemplate()
-			core.DownloadOneChapter(ch, catlog, cMap[catlog])
+			core.DownloadEntry(ch, catlog, cMap[catlog])
 		}
 		return nil
 	}

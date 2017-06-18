@@ -3,7 +3,6 @@ package core
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -14,34 +13,27 @@ import (
 )
 
 func getPage(mangaURL string) (string, error) {
-	timeoutRequest := http.Client{Timeout: time.Second * 30}
+	timeoutRequest := http.Client{Timeout: time.Minute * 5}
 	response, err := timeoutRequest.Get(mangaURL)
 	if err != nil {
 		panic(err)
 	}
 	defer response.Body.Close()
-	if response.StatusCode != 200 {
+	if http.StatusOK != response.StatusCode {
 		return "", utility.MyError{What: fmt.Sprintf("Got http status code: %v", response.StatusCode)}
 	}
 	byteData, _ := ioutil.ReadAll(response.Body)
 	return string(byteData), nil
 }
 
-func downloadPage(mangaURL string) string {
-	timeoutRequest := http.Client{Timeout: time.Second * 30}
-	response, err := timeoutRequest.Get(mangaURL)
-	if err != nil {
-		log.Fatalln(err)
+func decomposeAllChapter(rootPageDetail string) []string {
+	regexChapter := regexp.MustCompile("http://readcomicbooksonline.net/reader/[a-zA-Z0-9 /_-]+")
+	allChapter := regexChapter.FindAllString(rootPageDetail, -1)
+	// reverse slice
+	for i, j := 0, len(allChapter)-1; i < j; i, j = j+1, j-1 {
+		allChapter[i], allChapter[j] = allChapter[j], allChapter[i]
 	}
-	defer response.Body.Close()
-	if http.StatusOK != response.StatusCode {
-		log.Fatalf("http not ok, http status code=%d", response.StatusCode)
-	}
-	byteData, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		panic(err)
-	}
-	return string(byteData)
+	return allChapter
 }
 
 func decomposePictureURL(page string) (string, error) {
