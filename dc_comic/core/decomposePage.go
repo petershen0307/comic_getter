@@ -30,7 +30,7 @@ func decomposeAllChapter(rootPageDetail string) []string {
 	regexChapter := regexp.MustCompile("http://readcomicbooksonline.net/reader/[a-zA-Z0-9 /_-]+")
 	allChapter := regexChapter.FindAllString(rootPageDetail, -1)
 	// reverse slice
-	for i, j := 0, len(allChapter)-1; i < j; i, j = j+1, j-1 {
+	for i, j := 0, len(allChapter)-1; i < j; i, j = i+1, j-1 {
 		allChapter[i], allChapter[j] = allChapter[j], allChapter[i]
 	}
 	return allChapter
