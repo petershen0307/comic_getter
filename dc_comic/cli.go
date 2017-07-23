@@ -25,24 +25,24 @@ func main() {
 			Usage: "Set the chapter",
 		},
 		cli.StringFlag{
-			Name:  "catlog, ca",
-			Usage: "Set comic catlog",
+			Name:  "catalog, ca",
+			Usage: "Set comic catalog",
 		},
 	}
 	app.Action = func(c *cli.Context) error {
-		catlog := c.String("catlog")
-		log.Println("input catlog ", catlog)
-		if "" == catlog {
-			fmt.Println("Please input comic catlog!")
+		catalog := c.String("catalog")
+		log.Println("input catalog ", catalog)
+		if "" == catalog {
+			fmt.Println("Please input comic catalog!")
 		}
 		ch := c.String("chapter")
 		log.Println("get input chapter ", ch)
 		if "" == ch {
 			fmt.Println("Please input chapter number!")
 		}
-		if ch, err := strconv.Atoi(ch); err == nil {
+		if chInt, err := strconv.Atoi(ch); err == nil {
 			cMap := utility.GetURLTemplate()
-			core.DownloadEntry(ch, catlog, cMap[catlog])
+			core.DownloadEntry(chInt, catalog, cMap[catalog])
 		}
 		return nil
 	}
