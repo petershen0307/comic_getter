@@ -71,7 +71,7 @@ func downloadChapter(dir, mangaURL string) error {
 	return nil
 }
 
-func downloadPicture(dir, page, pictureURL string) error {
+func downloadPicture(dir, pageFileName, pictureURL string) error {
 	timeoutClient := http.Client{Timeout: time.Minute * 5}
 	req, err := http.NewRequest("GET", pictureURL, nil)
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
@@ -83,7 +83,7 @@ func downloadPicture(dir, page, pictureURL string) error {
 	if http.StatusOK != response.StatusCode {
 		log.Fatalf("http not ok, http status code=%d", response.StatusCode)
 	}
-	err = utility.WriteFile(response.Body, dir, page)
+	err = utility.WriteFile(response.Body, dir, pageFileName)
 	if err != nil {
 		return err
 	}

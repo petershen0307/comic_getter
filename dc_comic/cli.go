@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strconv"
 
 	"github.com/petershen0307/comic_getter/dc_comic/core"
 	"github.com/petershen0307/comic_getter/dc_comic/utility"
@@ -17,16 +16,23 @@ func main() {
 	app.Usage = "Download comic"
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
-			// this is command, using --chapter or -c
+			Name:  "catalog, ca",
+			Usage: "Set comic catalog",
+			Value: "wonder_woman_2016",
+		},
+		cli.IntFlag{
+			// this is command, using --chapter or --ch
 			Name: "chapter, ch",
 			// this is default value
-			// Value: "0",
+			Value: 0,
 			// this is the description about this command
 			Usage: "Set the chapter",
 		},
 		cli.StringFlag{
-			Name:  "catalog, ca",
-			Usage: "Set comic catalog",
+			// --path or -p
+			Name:  "path, p",
+			Value: "./bin/settings.json",
+			Usage: "Setting path",
 		},
 	}
 	app.Action = func(c *cli.Context) error {
@@ -35,15 +41,16 @@ func main() {
 		if "" == catalog {
 			fmt.Println("Please input comic catalog!")
 		}
-		ch := c.String("chapter")
+		ch := c.Int("chapter")
 		log.Println("get input chapter ", ch)
-		if "" == ch {
+		if 0 == ch {
 			fmt.Println("Please input chapter number!")
 		}
-		if chInt, err := strconv.Atoi(ch); err == nil {
-			cMap := utility.GetURLTemplate()
-			core.DownloadEntry(chInt, catalog, cMap[catalog])
-		}
+		path := c.String("path")
+		log.Println("input setting path", path)
+		// Entry point
+		cMap := utility.GetURLTemplate(path)
+		core.DownloadEntry(ch, catalog, cMap[catalog])
 		return nil
 	}
 

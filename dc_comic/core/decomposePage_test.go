@@ -69,7 +69,7 @@ func Test_decomposeChapterMaxPage(t *testing.T) {
 }
 
 func Test_decomposeAllChapter(t *testing.T) {
-	mangaMap := utility.GetURLTemplate()
+	mangaMap := utility.GetURLTemplate("")
 	mangaCatlog := "wonder_woman_2016"
 	pageDetail, _ := getPage(mangaMap[mangaCatlog])
 	type args struct {

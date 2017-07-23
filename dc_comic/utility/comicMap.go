@@ -7,15 +7,17 @@ import (
 )
 
 // GetURLTemplate to get url map, key:comicCatlog, value:url template
-func GetURLTemplate() map[string]string {
-	// urlTemplate := map[string]string{
-	// 	"justice_league":    "http://readcomicbooksonline.net/justice-league",
-	// 	"wonder_woman_2016": "http://readcomicbooksonline.net/wonder-woman-2016",
-	// }
-	urlTemplate := make(map[string]string)
-	mangaList := readSettings()
-	for _, catalog := range mangaList {
-		urlTemplate[catalog.Name] = catalog.Path
+func GetURLTemplate(settingPath string) map[string]string {
+	urlTemplate := map[string]string{
+		"justice_league":    "http://readcomicbooksonline.net/justice-league",
+		"wonder_woman_2016": "http://readcomicbooksonline.net/wonder-woman-2016",
+	}
+	if "" != settingPath {
+		urlTemplate = make(map[string]string)
+		mangaList := readSettings(settingPath)
+		for _, catalog := range mangaList {
+			urlTemplate[catalog.Name] = catalog.Path
+		}
 	}
 	return urlTemplate
 }
@@ -31,8 +33,8 @@ type Settings struct {
 	Catalogs []Catalog
 }
 
-func readSettings() []Catalog {
-	rawData, err := ioutil.ReadFile("./bin/settings.json")
+func readSettings(settingPath string) []Catalog {
+	rawData, err := ioutil.ReadFile(settingPath)
 	if err != nil {
 		log.Fatalln("open file failed, err:", err)
 	}

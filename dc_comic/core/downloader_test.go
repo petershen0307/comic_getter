@@ -33,7 +33,7 @@ func Test_downloadChapter(t *testing.T) {
 }
 
 func TestDownloadEntry(t *testing.T) {
-	mangaMap := utility.GetURLTemplate()
+	mangaMap := utility.GetURLTemplate("")
 	mangaCatlog := "wonder_woman_2016"
 	type args struct {
 		ch          int
