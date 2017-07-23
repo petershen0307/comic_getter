@@ -1,12 +1,47 @@
 package utility
 
+import (
+	"encoding/json"
+	"io/ioutil"
+	"log"
+)
+
 // GetURLTemplate to get url map, key:comicCatlog, value:url template
 func GetURLTemplate() map[string]string {
-	urlTemplate := map[string]string{
-		"justice_league":    "http://readcomicbooksonline.net/justice-league",
-		"wonder_woman_2016": "http://readcomicbooksonline.net/wonder-woman-2016",
+	// urlTemplate := map[string]string{
+	// 	"justice_league":    "http://readcomicbooksonline.net/justice-league",
+	// 	"wonder_woman_2016": "http://readcomicbooksonline.net/wonder-woman-2016",
+	// }
+	urlTemplate := make(map[string]string)
+	mangaList := readSettings()
+	for _, catalog := range mangaList {
+		urlTemplate[catalog.Name] = catalog.Path
 	}
 	return urlTemplate
+}
+
+// Catalog collect manga name and url
+type Catalog struct {
+	Name string
+	Path string
+}
+
+// Settings is the manga configure file structure
+type Settings struct {
+	Catalogs []Catalog
+}
+
+func readSettings() []Catalog {
+	rawData, err := ioutil.ReadFile("./bin/settings.json")
+	if err != nil {
+		log.Fatalln("open file failed, err:", err)
+	}
+	var settings Settings
+	err = json.Unmarshal(rawData, &settings)
+	if err != nil {
+		log.Fatalln("unmarshal json failed, err:", err)
+	}
+	return settings.Catalogs
 }
 
 // const urlTemplate = "http://www.readcomics.tv/images/manga/justice-league/%02d/%d.jpg"

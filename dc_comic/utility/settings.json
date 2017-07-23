@@ -1,0 +1,12 @@
+{
+    "Catalogs": [
+        {
+            "Name": "justice_league",
+            "Path": "http://readcomicbooksonline.net/justice-league"
+        },
+        {
+            "Name": "wonder_woman_2016",
+            "Path": "http://readcomicbooksonline.net/wonder-woman-2016"
+        }
+    ]
+}
