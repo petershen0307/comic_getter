@@ -72,8 +72,10 @@ func downloadChapter(dir, mangaURL string) error {
 }
 
 func downloadPicture(dir, page, pictureURL string) error {
-	timeoutRequest := http.Client{Timeout: time.Minute * 5}
-	response, err := timeoutRequest.Get(pictureURL)
+	timeoutClient := http.Client{Timeout: time.Minute * 5}
+	req, err := http.NewRequest("GET", pictureURL, nil)
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
+	response, err := timeoutClient.Do(req)
 	if err != nil {
 		log.Fatalln(err)
 	}
