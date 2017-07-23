@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -16,7 +17,7 @@ func getPage(mangaURL string) (string, error) {
 	timeoutRequest := http.Client{Timeout: time.Minute * 5}
 	response, err := timeoutRequest.Get(mangaURL)
 	if err != nil {
-		panic(err)
+		log.Panicln("url:", mangaURL, "err:", err)
 	}
 	defer response.Body.Close()
 	if http.StatusOK != response.StatusCode {
