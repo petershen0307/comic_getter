@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"strings"
 	"time"
 
 	"github.com/petershen0307/comic_getter/dc_comic/utility"
@@ -35,6 +36,7 @@ func DownloadEntry(ch int, comicCatlog, rootURL string) {
 	currentDir, _ := os.Getwd()
 	downloadPath := path.Join(currentDir, chDir)
 	log.Printf("Download path: %v\n", downloadPath)
+	log.Printf("All chapters: %v\n", chapters)
 	downloadChapter(downloadPath, chapters[ch-1])
 }
 
@@ -73,6 +75,7 @@ func downloadChapter(dir, mangaURL string) error {
 
 func downloadPicture(dir, pageFileName, pictureURL string) error {
 	timeoutClient := http.Client{Timeout: time.Minute * 5}
+	pictureURL = strings.Replace(pictureURL, " ", "%20", -1)
 	req, err := http.NewRequest("GET", pictureURL, nil)
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
 	response, err := timeoutClient.Do(req)
@@ -81,7 +84,7 @@ func downloadPicture(dir, pageFileName, pictureURL string) error {
 	}
 	defer response.Body.Close()
 	if http.StatusOK != response.StatusCode {
-		log.Fatalf("http not ok, http status code=%d", response.StatusCode)
+		log.Fatalf("http not ok, http status code=%d, url: %v", response.StatusCode, pictureURL)
 	}
 	err = utility.WriteFile(response.Body, dir, pageFileName)
 	if err != nil {

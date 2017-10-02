@@ -28,7 +28,7 @@ func getPage(mangaURL string) (string, error) {
 }
 
 func decomposeAllChapter(rootPageDetail string) []string {
-	regexChapter := regexp.MustCompile("http://readcomicbooksonline.net/reader/[a-zA-Z0-9 /_-]+")
+	regexChapter := regexp.MustCompile(`http://readcomicbooksonline.net/reader/[a-zA-Z0-9 /_\-\(\)]+`)
 	allChapter := regexChapter.FindAllString(rootPageDetail, -1)
 	// reverse slice
 	for i, j := 0, len(allChapter)-1; i < j; i, j = i+1, j-1 {
@@ -50,7 +50,7 @@ func decomposePictureURL(page string) (string, error) {
 		return "", utility.MyError{What: "Split url with some error"}
 	}
 	// 2. find picture url
-	rePic := regexp.MustCompile("mangas/([a-zA-Z0-9 _/-])+.jpg")
+	rePic := regexp.MustCompile(`mangas/([a-zA-Z0-9 _/\-\(\)])+.jpg`)
 	picture := rePic.FindAllString(page, 1)
 	if len(picture) == 0 {
 		return "", utility.MyError{What: "Can't find the picture!"}
