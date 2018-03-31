@@ -16,25 +16,38 @@ func extractChapter(mangaChapterPage string) []string {
 		case tt == html.ErrorToken:
 			// End of the document, we're done
 			return chapterList
+		case tt == html.EndTagToken:
+			t := z.Token()
+			if t.Data == "div" {
+				foundChapterLink = false
+			}
 		case tt == html.StartTagToken:
 			t := z.Token()
-			// <li class="chapter">
-
-			if t.Data == "li" {
-				for _, li := range t.Attr {
-					if li.Key == "class" && li.Val == "chapter" {
+			// <div id="chapterlist">
+			if t.Data == "div" {
+				for _, div := range t.Attr {
+					if div.Key == "id" && div.Val == "chapterlist" {
 						foundChapterLink = true
+						continue
 					}
 				}
 			}
+			// <a href="">
 			if foundChapterLink && t.Data == "a" {
 				for _, a := range t.Attr {
 					if a.Key == "href" {
-						foundChapterLink = false
 						chapterList = append(chapterList, a.Val)
 					}
 				}
 			}
+			// <li class="chapter">
+			// if t.Data == "li" {
+			// 	for _, li := range t.Attr {
+			// 		if li.Key == "class" && li.Val == "chapter" {
+			// 			foundChapterLink = true
+			// 		}
+			// 	}
+			// }
 		}
 	}
 }
