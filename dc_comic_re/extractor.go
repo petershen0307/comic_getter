@@ -1,6 +1,7 @@
 package main
 
 import (
+	"path"
 	"strings"
 
 	"github.com/petershen0307/goLogger/logClient"
@@ -60,7 +61,7 @@ func extractChapter(mangaMainPage string) []string {
 func extractChapterImages(fullChapterPage string) []string {
 	z := html.NewTokenizer(strings.NewReader(fullChapterPage))
 	var chapterList []string
-	var baseURL string // with '/' at the last rune
+	var baseURL string
 	for foundImageLink := false; ; {
 		tt := z.Next()
 
@@ -78,8 +79,6 @@ func extractChapterImages(fullChapterPage string) []string {
 						baseURL = base.Val
 						if len(baseURL) == 0 {
 							logClient.Log(logClient.LevelWarning, "base url is empty")
-						} else if baseURL[len(baseURL)-1] != '/' {
-							baseURL += "/"
 						}
 						continue
 					}
@@ -90,7 +89,7 @@ func extractChapterImages(fullChapterPage string) []string {
 				for _, img := range t.Attr {
 					if img.Key == "src" {
 						// insert url to head
-						imgFullURL := baseURL + img.Val
+						imgFullURL := path.Join(baseURL, img.Val)
 						temp := append([]string{}, imgFullURL)
 						chapterList = append(temp, chapterList...)
 					}
