@@ -56,7 +56,7 @@ func downloadMain(config downloadConfig) {
 	// get manga images by chapter
 	var mangaChapterImageList []string
 	if int(config.mangaChapter) <= len(mangaChapterList) {
-		fullChapterURL := mangaChapterList[config.mangaChapter-1] + "/?q=fullchapter"
+		fullChapterURL := mangaChapterList[config.mangaChapter-1]
 		if chapterPage, bRet := download(fullChapterURL); bRet {
 			mangaChapterImageList = extractChapterImages(chapterPage.String())
 		} else {

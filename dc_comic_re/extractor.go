@@ -40,8 +40,10 @@ func extractChapter(mangaMainPage string) []string {
 			if foundChapterLink && t.Data == "a" {
 				for _, a := range t.Attr {
 					if a.Key == "href" {
+						// add full chapter query
+						url := a.Val + "/?q=fullchapter"
 						// insert url to head
-						temp := append([]string{}, a.Val)
+						temp := append([]string{}, url)
 						chapterList = append(temp, chapterList...)
 					}
 				}
