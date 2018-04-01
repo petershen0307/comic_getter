@@ -36,7 +36,9 @@ func extractChapter(mangaChapterPage string) []string {
 			if foundChapterLink && t.Data == "a" {
 				for _, a := range t.Attr {
 					if a.Key == "href" {
-						chapterList = append(chapterList, a.Val)
+						// insert url to head
+						temp := append([]string{}, a.Val)
+						chapterList = append(temp, chapterList...)
 					}
 				}
 			}
