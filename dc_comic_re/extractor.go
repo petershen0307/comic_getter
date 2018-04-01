@@ -3,11 +3,13 @@ package main
 import (
 	"strings"
 
+	"github.com/petershen0307/goLogger/logClient"
+
 	"golang.org/x/net/html"
 )
 
-func extractChapter(mangaChapterPage string) []string {
-	z := html.NewTokenizer(strings.NewReader(mangaChapterPage))
+func extractChapter(mangaMainPage string) []string {
+	z := html.NewTokenizer(strings.NewReader(mangaMainPage))
 	var chapterList []string
 	for foundChapterLink := false; ; {
 		tt := z.Next()
@@ -23,6 +25,7 @@ func extractChapter(mangaChapterPage string) []string {
 			}
 		case tt == html.StartTagToken:
 			t := z.Token()
+			// 連結存在 <div id="chapterlist"> </div> 之間
 			// <div id="chapterlist">
 			if t.Data == "div" {
 				for _, div := range t.Attr {
@@ -50,6 +53,66 @@ func extractChapter(mangaChapterPage string) []string {
 			// 		}
 			// 	}
 			// }
+		}
+	}
+}
+
+func extractChapterImages(fullChapterPage string) []string {
+	z := html.NewTokenizer(strings.NewReader(fullChapterPage))
+	var chapterList []string
+	var baseURL string // with '/' at the last rune
+	for foundImageLink := false; ; {
+		tt := z.Next()
+
+		switch {
+		case tt == html.ErrorToken:
+			// End of the document, we're done
+			return chapterList
+		case tt == html.SelfClosingTagToken:
+			t := z.Token()
+
+			// <base href="">
+			if t.Data == "base" {
+				for _, base := range t.Attr {
+					if base.Key == "href" {
+						baseURL = base.Val
+						if len(baseURL) == 0 {
+							logClient.Log(logClient.LevelWarning, "base url is empty")
+						} else if baseURL[len(baseURL)-1] != '/' {
+							baseURL += "/"
+						}
+						continue
+					}
+				}
+			}
+			// <img src=""/>
+			if foundImageLink && t.Data == "img" {
+				for _, img := range t.Attr {
+					if img.Key == "src" {
+						// insert url to head
+						imgFullURL := baseURL + img.Val
+						temp := append([]string{}, imgFullURL)
+						chapterList = append(temp, chapterList...)
+					}
+				}
+			}
+		case tt == html.StartTagToken:
+			t := z.Token()
+			// 連結存在 <div class="fullchapter"> </div> 這個tag之後
+			if t.Data == "div" {
+				for _, div := range t.Attr {
+					// <div class="fullchapter">
+					if div.Key == "class" && div.Val == "fullchapter" {
+						foundImageLink = true
+						continue
+					}
+					// <div id="block300">
+					if div.Key == "id" && div.Val == "block300" {
+						foundImageLink = false
+						return chapterList
+					}
+				}
+			}
 		}
 	}
 }
