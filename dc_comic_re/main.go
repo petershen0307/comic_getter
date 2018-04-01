@@ -11,8 +11,9 @@ func main() {
 	logClient.ModeSetting = logClient.ModePrint
 	logClient.Log(logClient.LevelDebug, "hello")
 	//testDownload()
-	testExtractor()
+	//testExtractor()
 	//testExtractAllImages()
+	testDownlad()
 }
 
 func testDownload() {
@@ -55,4 +56,14 @@ func testExtractAllImages() {
 		logClient.Log(logClient.LevelDebug, "chapterList is nil")
 	}
 	logClient.Log(logClient.LevelDebug, "chapterList:%+v, len:%v", chapterList, len(chapterList))
+}
+
+func testDownlad() {
+	config := downloadConfig{
+		mangaChapter:    1,
+		mangaMainURL:    "http://readcomicbooksonline.org/the-hellblazer-2016",
+		mangaName:       "the-hellblazer-2016",
+		downloadMainDir: `C:\Users\PC\Desktop\code\go\test`,
+	}
+	downloadMain(config)
 }
