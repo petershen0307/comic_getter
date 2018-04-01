@@ -8,6 +8,10 @@ import (
 )
 
 func main() {
+	cliMain()
+}
+
+func test() {
 	logClient.ModeSetting = logClient.ModePrint
 	logClient.Log(logClient.LevelDebug, "hello")
 	//testDownload()
